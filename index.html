@@ -1,22 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Nuestro espacio secreto</title>
+<title>Nuestro lugar secreto</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-
 body{
-font-family:Arial;
+font-family: Arial;
 margin:0;
 background:#0f172a;
 color:white;
 text-align:center;
 }
 
-section{
-padding:40px;
-}
+section{padding:40px;}
 
 button{
 padding:12px 20px;
@@ -28,19 +26,13 @@ cursor:pointer;
 margin:10px;
 }
 
-input{
+input,textarea{
 padding:10px;
 border-radius:8px;
 border:none;
 }
 
-#contenido{
-display:none;
-}
-
-#album{
-display:none;
-}
+#menu,#album,#notas,#reto{display:none;}
 
 .galeria{
 display:grid;
@@ -54,139 +46,202 @@ width:100%;
 border-radius:12px;
 }
 
-video{
-width:300px;
-border-radius:12px;
+.post{
+background:#fde68a;
+color:black;
+padding:15px;
+border-radius:10px;
+margin:10px;
+display:inline-block;
+max-width:200px;
 }
-
 </style>
 </head>
 
 <body>
 
 <section id="login">
-
-<h2>Entrar a nuestro espacio secreto 🔐</h2>
-
+<h2>Entrar a nuestro lugar secreto 🔐</h2>
 <input type="password" id="clave" placeholder="Contraseña">
-
 <br><br>
-
 <button onclick="entrar()">Entrar</button>
-
 </section>
 
-<section id="contenido">
+<section id="menu">
+<h1>Hola mi amor ❤️</h1>
+<p>Este es nuestro lugar secreto</p>
 
-<h1>Bienvenida 💙</h1>
-
-<p>Este es nuestro espacio secreto.</p>
-
-<button onclick="abrirAlbum()">Ver álbum 📸</button>
-
-<button onclick="reto()">Juego sorpresa 🎲</button>
-
-<p id="mensaje"></p>
-
+<button onclick="abrirReto()">🔥 Verdad o reto</button>
+<button onclick="abrirAlbum()">📸 Álbum</button>
+<button onclick="abrirNotas()">📝 Notitas</button>
 </section>
 
-<section id="album">
-
-<h2>Nuestro álbum</h2>
-
-<button onclick="volver()">⬅ Volver</button>
-
-<div class="galeria">
-
-<img src="foto1.jpg">
-<img src="foto2.jpg">
-<img src="foto3.jpg">
-
-</div>
-
+<section id="reto">
+<h2>Verdad o reto 🔥</h2>
+<button onclick="nuevoReto()">Nuevo reto</button>
+<p id="textoReto"></p>
 <br>
-
-<video controls>
-<source src="video1.mp4" type="video/mp4">
-</video>
-
+<button onclick="volverMenu()">⬅ Volver</button>
 </section>
 
-<script>
-
-function entrar(){
-
-let pass=document.getElementById("clave").value
-
-if(pass==="2411"){
-
-document.getElementById("login").style.display="none"
-document.getElementById("contenido").style.display="block"
-
-}else{
-
-alert("Contraseña incorrecta")
-
-}
-
-}
-
 <section id="album">
-
 <h2>Nuestro álbum 📸</h2>
 
-<button onclick="volver()">⬅ Volver</button>
-
-<br><br>
-
-<input type="file" id="subirFoto" accept="image/*,video/*">
-
-<br><br>
-
-<button onclick="mostrarArchivo()">Subir al álbum</button>
+<input type="file" id="fotoInput">
+<button onclick="subirFoto()">Subir foto</button>
 
 <div class="galeria" id="galeria"></div>
-function mostrarArchivo(){
 
-let input = document.getElementById("subirFoto")
-let archivo = input.files[0]
-
-if(!archivo) return
-
-let url = URL.createObjectURL(archivo)
-
-let galeria = document.getElementById("galeria")
-
-if(archivo.type.startsWith("image")){
-
-let img = document.createElement("img")
-img.src = url
-galeria.appendChild(img)
-
-}else if(archivo.type.startsWith("video")){
-
-let video = document.createElement("video")
-video.src = url
-video.controls = true
-galeria.appendChild(video)
-
-}
-
-}
+<br>
+<button onclick="volverMenu()">⬅ Volver</button>
 </section>
 
-function reto(){
+<section id="notas">
+<h2>Nuestras notitas 📝</h2>
+
+<textarea id="notaTexto" placeholder="Escribí algo lindo"></textarea>
+<br>
+<button onclick="guardarNota()">Guardar</button>
+
+<div id="muro"></div>
+
+<br>
+<button onclick="volverMenu()">⬅ Volver</button>
+</section>
+
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL, listAll } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
+
+const firebaseConfig = {
+apiKey: "AIzaSyAjotc59F0jGDMbUOpJSrFNGjm1eIAZ88Y",
+authDomain: "nuestro-lugar-secreto.firebaseapp.com",
+projectId: "nuestro-lugar-secreto",
+storageBucket: "nuestro-lugar-secreto.firebasestorage.app",
+messagingSenderId: "906469121429",
+appId: "1:906469121429:web:90a0edeebd71d97dc5aa9c",
+measurementId: "G-K4EVE531NM"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+window.entrar = function(){
+let pass=document.getElementById("clave").value
+if(pass==="2411"){
+document.getElementById("login").style.display="none"
+document.getElementById("menu").style.display="block"
+}else{
+alert("Contraseña incorrecta")
+}
+}
+
+window.abrirAlbum=function(){
+document.getElementById("menu").style.display="none"
+document.getElementById("album").style.display="block"
+cargarFotos()
+}
+
+window.abrirNotas=function(){
+document.getElementById("menu").style.display="none"
+document.getElementById("notas").style.display="block"
+cargarNotas()
+}
+
+window.abrirReto=function(){
+document.getElementById("menu").style.display="none"
+document.getElementById("reto").style.display="block"
+}
+
+window.volverMenu=function(){
+document.getElementById("album").style.display="none"
+document.getElementById("notas").style.display="none"
+document.getElementById("reto").style.display="none"
+document.getElementById("menu").style.display="block"
+}
+
+window.subirFoto=async function(){
+
+let archivo=document.getElementById("fotoInput").files[0]
+
+const storageRef = ref(storage,"fotos/"+archivo.name)
+
+await uploadBytes(storageRef,archivo)
+
+alert("Foto subida ❤️")
+
+cargarFotos()
+}
+
+async function cargarFotos(){
+
+let galeria=document.getElementById("galeria")
+galeria.innerHTML=""
+
+const listRef=ref(storage,"fotos")
+
+const res=await listAll(listRef)
+
+for(const item of res.items){
+
+let url=await getDownloadURL(item)
+
+let img=document.createElement("img")
+img.src=url
+
+galeria.appendChild(img)
+}
+
+}
+
+window.guardarNota=async function(){
+
+let texto=document.getElementById("notaTexto").value
+
+await addDoc(collection(db,"notas"),{
+texto:texto
+})
+
+document.getElementById("notaTexto").value=""
+
+cargarNotas()
+}
+
+async function cargarNotas(){
+
+let muro=document.getElementById("muro")
+muro.innerHTML=""
+
+const querySnapshot=await getDocs(collection(db,"notas"))
+
+querySnapshot.forEach((doc)=>{
+
+let div=document.createElement("div")
+div.className="post"
+div.innerText=doc.data().texto
+
+muro.appendChild(div)
+
+})
+}
+
+window.nuevoReto=function(){
 
 let retos=[
-"una chupadita 💋",
-"Abrazo obligatorio 🤗",
-"Hoy toca cita 😏",
-"Ver una peli juntos 🎬"
+"Beso de 20 segundos",
+"Contame una fantasía",
+"Masaje obligatorio",
+"Besos por todo el cuello",
+"Decime qué te gustaría hacer conmigo"
 ]
 
 let random=Math.floor(Math.random()*retos.length)
 
-document.getElementById("mensaje").innerText=retos[random]
+document.getElementById("textoReto").innerText=retos[random]
 
 }
 
