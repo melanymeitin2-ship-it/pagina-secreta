@@ -2,13 +2,100 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Página secreta</title>
+<title>Nuestra página secreta</title>
+
+<style>
+body{
+font-family: Arial;
+text-align:center;
+background: linear-gradient(135deg,#6a11cb,#2575fc);
+color:white;
+height:100vh;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+}
+
+#contenido{
+display:none;
+}
+
+button{
+padding:10px 20px;
+border:none;
+border-radius:8px;
+background:white;
+color:#333;
+font-size:16px;
+cursor:pointer;
+}
+
+input{
+padding:10px;
+border-radius:8px;
+border:none;
+margin:10px;
+}
+</style>
 </head>
 
-<body style="text-align:center;font-family:Arial;margin-top:100px;">
+<body>
 
-<h1>Hola 💙</h1>
-<p>Esta es mi primera página secreta.</p>
+<h1>Página secreta 💙</h1>
+
+<div id="login">
+<p>Ingresá la contraseña</p>
+
+<input type="password" id="clave">
+
+<br>
+
+<button onclick="verificar()">Entrar</button>
+</div>
+
+<div id="contenido">
+
+<h2>Hola hermosa 😏</h2>
+
+<p>Si estás viendo esto es porque tenés acceso a mi página secreta.</p>
+
+<button onclick="sorpresa()">Sorpresa</button>
+
+<p id="mensaje"></p>
+
+</div>
+
+<script>
+
+function verificar(){
+let pass = document.getElementById("clave").value;
+
+if(pass === "1234"){
+document.getElementById("login").style.display="none";
+document.getElementById("contenido").style.display="block";
+}else{
+alert("Contraseña incorrecta");
+}
+
+}
+
+function sorpresa(){
+
+let mensajes = [
+"Tenés que darme un beso 💋",
+"Te extraño 😘",
+"Abrazo obligatorio ahora mismo 🤗",
+"Hoy me debés una cita 😏"
+]
+
+let random = Math.floor(Math.random()*mensajes.length)
+
+document.getElementById("mensaje").innerText = mensajes[random]
+
+}
+
+</script>
 
 </body>
 </html>
