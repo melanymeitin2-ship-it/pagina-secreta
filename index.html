@@ -7,21 +7,39 @@
 <style>
 
 body{
-font-family: Arial;
+font-family:Arial;
 margin:0;
 background:#0f172a;
 color:white;
 text-align:center;
 }
 
-header{
-padding:30px;
-font-size:28px;
-background:#1e293b;
-}
-
 section{
 padding:40px;
+}
+
+button{
+padding:12px 20px;
+border:none;
+border-radius:10px;
+background:#38bdf8;
+font-size:16px;
+cursor:pointer;
+margin:10px;
+}
+
+input{
+padding:10px;
+border-radius:8px;
+border:none;
+}
+
+#contenido{
+display:none;
+}
+
+#album{
+display:none;
 }
 
 .galeria{
@@ -41,32 +59,42 @@ width:300px;
 border-radius:12px;
 }
 
-button{
-padding:10px 20px;
-border:none;
-border-radius:8px;
-background:#38bdf8;
-cursor:pointer;
-font-size:16px;
-}
-
-#reto{
-margin-top:20px;
-font-size:20px;
-}
-
 </style>
 </head>
 
 <body>
 
-<header>
-Nuestro espacio secreto 💙
-</header>
+<section id="login">
 
-<section>
+<h2>Entrar a nuestro espacio secreto 🔐</h2>
 
-<h2>Álbum</h2>
+<input type="password" id="clave" placeholder="Contraseña">
+
+<br><br>
+
+<button onclick="entrar()">Entrar</button>
+
+</section>
+
+<section id="contenido">
+
+<h1>Bienvenida 💙</h1>
+
+<p>Este es nuestro espacio secreto.</p>
+
+<button onclick="abrirAlbum()">Ver álbum 📸</button>
+
+<button onclick="reto()">Juego sorpresa 🎲</button>
+
+<p id="mensaje"></p>
+
+</section>
+
+<section id="album">
+
+<h2>Nuestro álbum</h2>
+
+<button onclick="volver()">⬅ Volver</button>
 
 <div class="galeria">
 
@@ -76,11 +104,7 @@ Nuestro espacio secreto 💙
 
 </div>
 
-</section>
-
-<section>
-
-<h2>Videos</h2>
+<br>
 
 <video controls>
 <source src="video1.mp4" type="video/mp4">
@@ -88,30 +112,51 @@ Nuestro espacio secreto 💙
 
 </section>
 
-<section>
-
-<h2>Juego sorpresa 🎲</h2>
-
-<button onclick="reto()">Dame un reto</button>
-
-<p id="reto"></p>
-
-</section>
-
 <script>
+
+function entrar(){
+
+let pass=document.getElementById("clave").value
+
+if(pass==="2411"){
+
+document.getElementById("login").style.display="none"
+document.getElementById("contenido").style.display="block"
+
+}else{
+
+alert("Contraseña incorrecta")
+
+}
+
+}
+
+function abrirAlbum(){
+
+document.getElementById("contenido").style.display="none"
+document.getElementById("album").style.display="block"
+
+}
+
+function volver(){
+
+document.getElementById("album").style.display="none"
+document.getElementById("contenido").style.display="block"
+
+}
 
 function reto(){
 
 let retos=[
-"Dame un beso 💋",
+"una chupadita 💋",
 "Abrazo obligatorio 🤗",
-"Tenemos que ver una peli juntos 🎬",
-"Hoy toca cita 😏"
+"Hoy toca cita 😏",
+"Ver una peli juntos 🎬"
 ]
 
 let random=Math.floor(Math.random()*retos.length)
 
-document.getElementById("reto").innerText=retos[random]
+document.getElementById("mensaje").innerText=retos[random]
 
 }
 
