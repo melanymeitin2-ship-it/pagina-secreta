@@ -131,19 +131,49 @@ alert("Contraseña incorrecta")
 
 }
 
-function abrirAlbum(){
+<section id="album">
 
-document.getElementById("contenido").style.display="none"
-document.getElementById("album").style.display="block"
+<h2>Nuestro álbum 📸</h2>
+
+<button onclick="volver()">⬅ Volver</button>
+
+<br><br>
+
+<input type="file" id="subirFoto" accept="image/*,video/*">
+
+<br><br>
+
+<button onclick="mostrarArchivo()">Subir al álbum</button>
+
+<div class="galeria" id="galeria"></div>
+function mostrarArchivo(){
+
+let input = document.getElementById("subirFoto")
+let archivo = input.files[0]
+
+if(!archivo) return
+
+let url = URL.createObjectURL(archivo)
+
+let galeria = document.getElementById("galeria")
+
+if(archivo.type.startsWith("image")){
+
+let img = document.createElement("img")
+img.src = url
+galeria.appendChild(img)
+
+}else if(archivo.type.startsWith("video")){
+
+let video = document.createElement("video")
+video.src = url
+video.controls = true
+galeria.appendChild(video)
 
 }
 
-function volver(){
-
-document.getElementById("album").style.display="none"
-document.getElementById("contenido").style.display="block"
-
 }
+</section>
 
 function reto(){
 
